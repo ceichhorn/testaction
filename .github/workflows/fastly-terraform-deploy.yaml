@@ -1,0 +1,61 @@
+name: Fastly Terraform Deploy
+on:  push
+
+jobs:
+  example:
+    name: test-fastly
+    runs-on: "ubuntu-latest"
+    env:
+      TF_VERSION: latest
+      TF_VAR_FASTLY_API_KEY: ${{ secrets.FASTLY_API_KEY }}
+      REPO_NAME: ${{ github.event.repository.name }}
+    steps:
+      - name:  Listing directory
+        run: ls -la
+    
+      - name: Dump github environment
+        run:   echo "$GITHUB_ENV"
+        shell: sh
+      - name: Cat github environment
+        run:   cat /github/workflow/envs.txt
+        shell: sh
+        env:
+        GITHUB_CONTEXT: ${{ toJson(github) }}
+      - name: Checkout Fastly service
+        uses: actions/checkout@v2 
+        with:
+          repository: "ceichhorn/fastly-test@main"
+          token: ${{ secrets.GITHUBACTION_TOKEN }}
+          path: ./sitename
+      
+      
+      # - name: Checkout
+      #   uses: actions/checkout@master
+      # - name: Terraform Init
+      #   uses: hashicorp/terraform-github-actions@master
+      #   with:
+      #     tf_actions_version: ${{ env.TF_VERSION }}
+      #     tf_actions_subcommand: init
+      #     tf_actions_comment: false
+      # - name: Terraform Import
+      #   uses: hashicorp/terraform-github-actions@master
+      #   with:
+      #     tf_actions_version: ${{ env.TF_VERSION }}
+      #     tf_actions_subcommand: import
+      #     tf_actions_comment: false
+      #     args: fastly_service_v1.example ${{ env.TF_SERVICE_ID }}
+      # - name: Terraform Plan
+      #   id: plan
+      #   uses: hashicorp/terraform-github-actions@master
+      #   with:
+      #     tf_actions_version: ${{ env.TF_VERSION }}
+      #     tf_actions_subcommand: plan
+      #     tf_actions_comment: false
+      #     args: -out=example.plan
+      # - name: Terraform Output
+      #   id: output
+      #   uses: hashicorp/terraform-github-actions@master
+      #   with:
+      #     tf_actions_version: ${{ env.TF_VERSION }}
+      #     tf_actions_subcommand: output
+      
