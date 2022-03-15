@@ -17,7 +17,9 @@ MERGE=$(git log --pretty=format:"{\"merge\":[{\"sha\":\"%H\",\"author\":\"%an\",
                   "type":"commit"
               }'
           )
-echo "$SUMMARY"
+echo "Summary: $SUMMARY"
+echo "Sha:  $SHA"
+echo "$git_tag_response"
           git_refs_response=$(
             curl -s "https://api.github.com/repos/${REPO}/git/refs" \
             -H "Authorization: Bearer ${GITHUB_TOKEN}" \
@@ -29,6 +31,7 @@ echo "$SUMMARY"
             }'
           )
           git_ref_posted=$( echo "${git_refs_response}" | jq -r '.ref' )
+          echo "$git_ref_posted"
           if [ "${git_ref_posted}" = "refs/tags/${TAG}" ]; then
             echo "::notice::Tagging repo"
           else
